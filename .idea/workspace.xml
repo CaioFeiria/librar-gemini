@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="820951a0-462a-4b06-9749-3b884e008140" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/blueprints/pdfs_bp.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/blueprints/pdfs_bp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/blueprints/validate_bp.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/blueprints/validate_bp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +68,7 @@
       <updated>1761079321075</updated>
       <workItem from="1761079322113" duration="1785000" />
       <workItem from="1761162876516" duration="4535000" />
-      <workItem from="1761242542947" duration="6235000" />
+      <workItem from="1761242542947" duration="6552000" />
     </task>
     <servers />
   </component>
