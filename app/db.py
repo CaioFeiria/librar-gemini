@@ -3,7 +3,7 @@ from bson import ObjectId
 import gridfs
 from hashlib import sha256
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Tuple
 
 _client = None
 _db = None
@@ -22,14 +22,19 @@ def init_mongo(uri: str, dbname: str):
         unique=True,
         sparse=True
     )
-    _db["reference_pdfs"].create_index(
-        [("reference_key", ASCENDING)], unique=True, name="reference_key_unique"
+    # Agora armazenamos 1 PDF por letra
+    _db["letter_pdfs"].create_index(
+        [("letter", ASCENDING)],
+        unique=True,
+        name="letter_unique_idx"
     )
-    _db["reference_pdfs"].create_index(
-        [("created_at", DESCENDING)], name="ref_created_desc"
+    _db["letter_pdfs"].create_index(
+        [("created_at", DESCENDING)],
+        name="letter_created_desc"
     )
     _db["validations"].create_index(
-        [("created_at", DESCENDING)], name="val_created_desc"
+        [("created_at", DESCENDING)],
+        name="val_created_desc"
     )
     return _db, _fs
 
@@ -56,11 +61,15 @@ def put_gridfs_if_new(data: bytes, filename: str, content_type: str, kind: str) 
         uploadDate=datetime.utcnow()
     )
 
-def upsert_reference_pdf(reference_key: str, file_id: ObjectId, filename: str, content_type: str):
-    _db["reference_pdfs"].update_one(
-        {"reference_key": reference_key},
+def upsert_letter_pdf(letter: str, file_id: ObjectId, filename: str, content_type: str):
+    """
+    Registra/atualiza o PDF associado a uma letra.
+    """
+    letter = (letter or "").strip().upper()
+    _db["letter_pdfs"].update_one(
+        {"letter": letter},
         {"$set": {
-            "reference_key": reference_key,
+            "letter": letter,
             "file_id": file_id,
             "filename": filename,
             "content_type": content_type,
@@ -69,11 +78,12 @@ def upsert_reference_pdf(reference_key: str, file_id: ObjectId, filename: str, c
         upsert=True
     )
 
-def get_reference_by_key(reference_key: str) -> Optional[dict]:
-    return _db["reference_pdfs"].find_one({"reference_key": reference_key})
-
-def get_latest_reference() -> Optional[dict]:
-    return _db["reference_pdfs"].find_one({}, sort=[("created_at", -1)])
+def get_pdf_by_letter(letter: str) -> Optional[dict]:
+    """
+    Retorna o doc da letra (com file_id) ou None.
+    """
+    letter = (letter or "").strip().upper()
+    return _db["letter_pdfs"].find_one({"letter": letter})
 
 def get_file_bytes(file_id: ObjectId) -> bytes:
     f = _fs.get(file_id)

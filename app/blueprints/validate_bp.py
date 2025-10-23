@@ -10,13 +10,11 @@ validate_bp = Blueprint("validate", __name__)
 @validate_bp.post("/validate-libras")
 def validate_libras():
     """
-    Form data:
-      - letter: str (ex: 'A')
-      - photo: file (image/*)
-      - pdf_file_id: str (opcional) -> ID do PDF salvo no Mongo (GridFS)
+    Form-data:
+      - letter: str (ex.: 'A')  -> usado para buscar o PDF correspondente
+      - photo: file (image/*)   -> foto do aluno
     """
-    letter = (request.form.get("letter") or "").strip()
-    pdf_file_id = (request.form.get("pdf_file_id") or "").strip()
+    letter = (request.form.get("letter") or "").strip().upper()
     photo = request.files.get("photo")
 
     if not letter:
@@ -24,23 +22,15 @@ def validate_libras():
     if not photo or not (photo.mimetype or "").startswith("image/"):
         return jsonify(erro="Envie uma foto válida (image/*) no campo 'photo'"), 400
 
-    # ========== 1) Buscar o PDF ==========
-    if pdf_file_id:
-        try:
-            pdf_bytes = coredb.get_file_bytes(ObjectId(pdf_file_id))
-            pdf_meta = {"file_id": pdf_file_id}
-        except Exception:
-            return jsonify(erro="PDF não encontrado no banco para o ID informado"), 404
-    else:
-        # Fallback: usa o mais recente se não for enviado o ID
-        ref = coredb.get_latest_reference()
-        if not ref:
-            return jsonify(erro="Nenhum PDF encontrado. Envie o campo 'pdf_file_id' ou cadastre um em /pdfs"), 404
-        pdf_file_id = str(ref["file_id"])
-        pdf_bytes = coredb.get_file_bytes(ObjectId(pdf_file_id))
-        pdf_meta = {"file_id": pdf_file_id}
+    # 1) Buscar PDF da letra
+    doc = coredb.get_pdf_by_letter(letter)
+    if not doc:
+        return jsonify(erro=f"PDF da letra '{letter}' não cadastrado"), 404
 
-    # ========== 2) Ler a foto ==========
+    pdf_file_id = doc["file_id"]
+    pdf_bytes = coredb.get_file_bytes(ObjectId(pdf_file_id))
+
+    # 2) Ler/salvar foto (GridFS p/ auditoria)
     photo_bytes = photo.read()
     photo_file_id = coredb.put_gridfs_if_new(
         data=photo_bytes,
@@ -49,10 +39,9 @@ def validate_libras():
         kind="student_photo"
     )
 
-    # ========== 3) Chamar o Gemini ==========
+    # 3) Chamar Gemini
     from flask import current_app
     model_name = current_app.config["GEMINI_MODEL"]
-
     result_text, finish_reason = evaluate_letter(
         model_name=model_name,
         letter=letter,
@@ -62,7 +51,7 @@ def validate_libras():
         pdf_bytes=pdf_bytes
     )
 
-    # ========== 4) Logar no banco ==========
+    # 4) Logar
     log_validation(
         letter=letter,
         photo_file_id=photo_file_id,
@@ -71,25 +60,27 @@ def validate_libras():
         result_text=result_text,
         finish_reason=finish_reason,
         photo_meta={
-            "filename": photo.filename,
-            "content_type": photo.mimetype,
-            "size_bytes": len(photo_bytes)
+            "filename": photo.filename, "content_type": photo.mimetype, "size_bytes": len(photo_bytes)
         },
-        pdf_meta=pdf_meta
+        pdf_meta={
+            "letter": letter, "filename": doc.get("filename"), "content_type": doc.get("content_type")
+        }
     )
 
-    # ========== 5) Retorno ==========
+    # 5) Retorno
     if result_text:
         return jsonify({
             "resultado": result_text,
             "finish_reason": finish_reason,
+            "letter": letter,
             "photo_file_id": str(photo_file_id),
-            "pdf_file_id": pdf_file_id
+            "pdf_file_id": str(pdf_file_id)
         }), 200
 
     return jsonify({
         "erro": "A resposta do modelo foi bloqueada ou vazia.",
         "finish_reason": finish_reason or "DESCONHECIDO",
+        "letter": letter,
         "photo_file_id": str(photo_file_id),
-        "pdf_file_id": pdf_file_id
+        "pdf_file_id": str(pdf_file_id)
     }), 502

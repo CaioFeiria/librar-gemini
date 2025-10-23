@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="820951a0-462a-4b06-9749-3b884e008140" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/blueprints/files_bp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/blueprints/pdfs_bp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/blueprints/validate_bp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/db.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/gemini_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/storage_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/blueprints/pdfs_bp.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/blueprints/pdfs_bp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/blueprints/validate_bp.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/blueprints/validate_bp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/db.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,12 +71,23 @@
       <updated>1761079321075</updated>
       <workItem from="1761079322113" duration="1785000" />
       <workItem from="1761162876516" duration="4535000" />
-      <workItem from="1761242542947" duration="4686000" />
+      <workItem from="1761242542947" duration="6235000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/gmi_flask$main.coverage" NAME="main Coverage Results" MODIFIED="1761165858790" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
