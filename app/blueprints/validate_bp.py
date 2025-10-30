@@ -4,6 +4,7 @@ from bson import ObjectId
 from .. import db as coredb
 from ..services.gemini_service import evaluate_letter
 from ..services.storage_service import log_validation
+from flask import current_app
 
 validate_bp = Blueprint("validate", __name__)
 
@@ -40,7 +41,6 @@ def validate_libras():
     )
 
     # 3) Chamar Gemini
-    from flask import current_app
     model_name = current_app.config["GEMINI_MODEL"]
     result_text, finish_reason = evaluate_letter(
         model_name=model_name,
